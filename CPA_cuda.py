@@ -1,6 +1,8 @@
 import pycuda.autoinit
 import pycuda.driver as drv
 import numpy as np
+import os
+from pathlib import Path
 from pycuda.compiler import SourceModule
 
 
@@ -20,7 +22,7 @@ def cpa_cuda_256(traces: np.ndarray,
                            "Please use 'np.ascontiguousarray(...)' to make the array contiguous.")
 
     result_corr = np.empty(shape=(256, traces.shape[1]))
-    with open("./cpa_kernel.cu", 'r') as kernel_fp:
+    with open(str(Path(os.path.abspath(__file__)).parent) + "/cpa_kernel.cu", 'r') as kernel_fp:
         kernel_code = ''.join(kernel_fp.readlines())
     kernel_code = kernel_code.replace("#define traceNum -1", f"#define traceNum {traces.shape[0]}")
     kernel = SourceModule(kernel_code)
@@ -30,4 +32,4 @@ def cpa_cuda_256(traces: np.ndarray,
     calculate_cor(drv.Out(result_corr), drv.In(traces), drv.In(estimated_power_consumption),
                   block=(256, 1, 1), grid=(num_of_samples, 1, 1))
 
-    return np.nan_to_num(result_corr, 0)
+    return np.nan_to_num(result_corr)
