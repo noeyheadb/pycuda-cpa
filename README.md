@@ -1,7 +1,6 @@
 # pycuda-CPA
-CUDA implementation of CPA(Correlation Power Analysis) using [`pycuda`](https://github.com/inducer/pycuda). It can be used as a sub-package in your Python project by adding it as a submodule.
-1. Move to the directory where the pycudaCPA package will be added.
-2. `git submodule add https://github.com/noeyheadb/pycuda-CPA.git pycudaCPA`.
+`pycuda-CPA` is a CUDA implementation of CPA(Correlation Power Analysis) using [`pycuda`](https://github.com/inducer/pycuda). 
+It is only works on CUDA-enabled systems.
 
 ## Environment setup
 - GPUs with compute capability less than 1.3 are not supported.
@@ -11,3 +10,6 @@ CUDA implementation of CPA(Correlation Power Analysis) using [`pycuda`](https://
 ## Requirements
 - pycuda >= 2020.1
 - numpy
+
+## Usage
+Demo script is available [here](https://github.com/noeyheadb/pycuda-CPA/blob/master/demo.py).
