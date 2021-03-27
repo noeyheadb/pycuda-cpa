@@ -16,21 +16,21 @@ Demo script is available [here](https://github.com/noeyheadb/pycuda-CPA/blob/mas
 
 ## Benchmark
 
-### Environment
-- Intel(R) Core(TM) i5-10500 CPU (Core: 6, Thread: 12)
-- DDR4 32GB 2133MHz RAM
+#### Environment
+- Intel(R) Core(TM) i5-10500 CPU (6 Cores, 12 Threads)
+- DDR4 32GB 2666MHz RAM
 - NVIDIA RTX2060 Super
   - GDDR6 8GB Memory
   - 2176 CUDA cores (Streaming Processors)
   - 7.5 Compute capability
   - ([more](https://en.wikipedia.org/wiki/CUDA#Version_features_and_specifications))
 
-### Experimental Setup
+#### Experimental Setup
 | Target algorithm | Detail                        | # of samples (per trace) |
 | :--------------: | :---------------------------: | :---------------:        |
 | Naïve AES        | 1st byte of 1-round SubBytes  | 24,400                   |
 
-### Results
+#### Results
 | Language | Implementation detail   | # of traces | Time      |
 | :------: | :---------------------: | :---------: | :--:      |
 | Python   | **`pycuda-CPA`**        | 1,000       | **0.41s** |
