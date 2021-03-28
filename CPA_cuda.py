@@ -64,7 +64,7 @@ def cpa_cuda_core(traces: np.ndarray,
         estimated_power_consumption = estimated_power_consumption.astype(np.float64, order='C')
 
     result_corr = np.empty(shape=(key_space, traces.shape[1]), order='C', dtype=np.float64)
-    with open(str(Path(os.path.abspath(__file__)).parent) + "/cpa_kernel.cu", 'r') as kernel_fp:
+    with open(str(Path(os.path.abspath(__file__)).parent) + "/cuda_kernels/cpa_kernel.cu", 'r') as kernel_fp:
         kernel_code = ''.join(kernel_fp.readlines())
     kernel_code = kernel_code.replace("#define traceNum -1", f"#define traceNum {traces.shape[0]}")
     kernel = SourceModule(kernel_code)
@@ -116,7 +116,7 @@ def power_modeling_for_cpa_16_using_cuda(text_in: Optional[np.ndarray],
     num_of_traces = len(text_in)
     estimated_power = np.empty(shape=(num_of_traces, 0x10000), order='C', dtype=np.float64)
 
-    with open(str(Path(os.path.abspath(__file__)).parent) + "/power_modeling_kernel.cu", 'r') as kernel_fp:
+    with open(str(Path(os.path.abspath(__file__)).parent) + "/cuda_kernels/power_modeling_kernel.cu", 'r') as kernel_fp:
         kernel_code = ''.join(kernel_fp.readlines())
     kernel_code = kernel_code.replace("#define blockSize -1", f"#define blockSize {block_size}")
     kernel_code = kernel_code.replace("#define targetByte1 -1", f"#define targetByte1 {target_byte_1}")
