@@ -63,7 +63,7 @@ def cpa_cuda_core(traces: np.ndarray,
         estimated_power_consumption = estimated_power_consumption.astype(np.float64, order='C')
 
     result_corr = np.empty(shape=(key_space, traces.shape[1]), order='C', dtype=np.float64)
-    with open(str(Path(os.path.abspath(__file__)).parent) + "/cuda_kernels/cpa_kernel.cu", 'r') as kernel_fp:
+    with open(str(Path(os.path.abspath(__file__)).parent.parent) + "/cuda_kernels/cpa_kernel.cu", 'r') as kernel_fp:
         kernel_code = ''.join(kernel_fp.readlines())
     kernel_code = kernel_code.replace("#define traceNum -1", f"#define traceNum {traces.shape[0]}")
     kernel = SourceModule(kernel_code)

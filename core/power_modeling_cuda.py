@@ -49,7 +49,8 @@ def power_modeling_for_cpa_16_using_cuda(text_in: Optional[np.ndarray],
     num_of_traces = len(text_in)
     estimated_power = np.empty(shape=(num_of_traces, 0x10000), order='C', dtype=np.float64)
 
-    with open(str(Path(os.path.abspath(__file__)).parent) + "/cuda_kernels/power_modeling_kernel.cu", 'r') as kernel_fp:
+    with open(str(Path(os.path.abspath(__file__)).parent.parent) + "/cuda_kernels/power_modeling_kernel.cu", 'r') \
+            as kernel_fp:
         kernel_code = ''.join(kernel_fp.readlines())
     kernel_code = kernel_code.replace("#define blockSize -1", f"#define blockSize {block_size}")
     kernel_code = kernel_code.replace("#define targetByte1 -1", f"#define targetByte1 {target_byte_1}")

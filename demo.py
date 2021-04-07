@@ -1,7 +1,7 @@
 import time
 import numpy as np
 from typing import Union
-from CPA_cuda import cpa_cuda_8_bit
+from core import cpa_cuda_8_bit
 
 
 AES_S_BOX = (
