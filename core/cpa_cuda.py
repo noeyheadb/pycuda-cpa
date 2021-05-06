@@ -114,14 +114,16 @@ def cpa_cuda_core(traces: np.ndarray,
 
     if benchmark:
         d = 2**30
-        print(f"[Allocation] Trace({traces.nbytes / d:.3f}GiB) + PC({estimated_power_consumption.nbytes/ d:.3f} GiB)"
+        print(f"\n============<<CUDA CPA>>============\n"
+              f"[Allocation] Trace({traces.nbytes / d:.3f}GiB) + PC({estimated_power_consumption.nbytes/ d:.3f} GiB)"
               f" + Result({result_corr.nbytes / d:.3f} GiB)\n[Allocation] Total : "
               f"{(traces.nbytes + estimated_power_consumption.nbytes + result_corr.nbytes)/d:.3f} GiB\n"
-              f"-----------------------------------\n"
+              f"------------------------------------\n"
               f"[Time] Memory copy (H->D) : {cp_1_end - cp_1_start:.4f}s\n"
               f"[Time] CUDA calculation   : {t:.4f}s\n"
               f"[Time] Memory copy (D->H) : {cp_2_end - cp_2_start:.4f}s\n"
-              f"-----------------------------------\n"
-              f"[Time]       Total        : {cp_1_end - cp_1_start + t + cp_2_end - cp_2_start:.4f}s")
+              f"------------------------------------\n"
+              f"[Time]       Total        : {cp_1_end - cp_1_start + t + cp_2_end - cp_2_start:.4f}s\n"
+              f"====================================\n")
 
     return np.nan_to_num(result_corr)

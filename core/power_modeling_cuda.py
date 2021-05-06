@@ -78,16 +78,16 @@ def power_modeling_for_cpa_16_using_cuda(text_in: Optional[np.ndarray],
 
     if benchmark:
         d = 2**30
-        print(f"------<<CUDA POWER MODELING>>------\n"
+        print(f"\n======<<CUDA POWER MODELING>>=======\n"
               f"[Allocation] P.C.({estimated_power.nbytes / d:.3f} GiB) + t_in({text_in.nbytes / d:.3f}GiB)"
               f" + t_out({text_out.nbytes/ d:.3f} GiB)\n[Allocation] Total : "
               f"{(text_in.nbytes + text_out.nbytes + estimated_power.nbytes)/d:.3f} GiB\n"
-              f"-----------------------------------\n"
+              f"------------------------------------\n"
               f"[Time] Memory copy (H->D) : {cp_1_end - cp_1_start:.4f}s\n"
               f"[Time] CUDA calculation   : {t:.4f}s\n"
               f"[Time] Memory copy (D->H) : {cp_2_end - cp_2_start:.4f}s\n"
-              f"-----------------------------------\n"
+              f"------------------------------------\n"
               f"[Time]       Total        : {cp_1_end - cp_1_start + t + cp_2_end - cp_2_start:.4f}s\n"
-              f"-----------------------------------\n")
+              f"====================================\n")
 
     return np.nan_to_num(estimated_power)
