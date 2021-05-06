@@ -2,6 +2,7 @@ import pycuda.autoinit
 import pycuda.driver as drv
 import numpy as np
 import os
+import time
 from typing import Optional
 from pathlib import Path
 from pycuda.compiler import SourceModule
@@ -12,7 +13,8 @@ def power_modeling_for_cpa_16_using_cuda(text_in: Optional[np.ndarray],
                                          target_byte_1: int,
                                          target_byte_2: int,
                                          block_size: int,
-                                         auto_c_contiguous: bool = True
+                                         auto_c_contiguous: bool = True,
+                                         benchmark: bool = False
                                          ) -> np.ndarray:
     """
     'power_modeling_for_cpa_16_using_cuda' is used to generate the estimated power consumption values in parallel.
@@ -25,6 +27,7 @@ def power_modeling_for_cpa_16_using_cuda(text_in: Optional[np.ndarray],
     :param target_byte_2: Target byte 1. range: 0 ~ block_size-1
     :param block_size: Block size of target algorithm. (unit: byte)  e.g., AES-128 -> 16
     :param auto_c_contiguous: If true, the c_contiguous property does not have to be considered. (Copying is performed.)
+    :param benchmark: Benchmark the time and the memory. (output to stdout)
     :return:
     """
     if text_in is None:
@@ -57,6 +60,34 @@ def power_modeling_for_cpa_16_using_cuda(text_in: Optional[np.ndarray],
     kernel_code = kernel_code.replace("#define targetByte2 -1", f"#define targetByte2 {target_byte_2}")
     kernel = SourceModule(kernel_code)
     power_modeling = kernel.get_function("power_consumption_modeling")
-    power_modeling(drv.Out(estimated_power), drv.In(text_in), drv.In(text_out),
-                   block=(256, 1, 1), grid=(256, num_of_traces, 1))
-    return estimated_power
+
+    cp_1_start = time.time()
+    cuda_estimated_power = drv.mem_alloc(estimated_power.nbytes)
+    cuda_text_in = drv.mem_alloc(text_in.nbytes)
+    cuda_text_out = drv.mem_alloc(text_out.nbytes)
+    drv.memcpy_htod(cuda_text_in, text_in)
+    drv.memcpy_htod(cuda_text_out, text_out)
+    cp_1_end = time.time()
+
+    t = power_modeling(cuda_estimated_power, cuda_text_in, cuda_text_out,
+                       block=(256, 1, 1), grid=(256, num_of_traces, 1), time_kernel=True)
+
+    cp_2_start = time.time()
+    drv.memcpy_dtoh(estimated_power, cuda_estimated_power)
+    cp_2_end = time.time()
+
+    if benchmark:
+        d = 2**30
+        print(f"------<<CUDA POWER MODELING>>------\n"
+              f"[Allocation] P.C.({estimated_power.nbytes / d:.3f} GiB) + t_in({text_in.nbytes / d:.3f}GiB)"
+              f" + t_out({text_out.nbytes/ d:.3f} GiB)\n[Allocation] Total : "
+              f"{(text_in.nbytes + text_out.nbytes + estimated_power.nbytes)/d:.3f} GiB\n"
+              f"-----------------------------------\n"
+              f"[Time] Memory copy (H->D) : {cp_1_end - cp_1_start:.4f}s\n"
+              f"[Time] CUDA calculation   : {t:.4f}s\n"
+              f"[Time] Memory copy (D->H) : {cp_2_end - cp_2_start:.4f}s\n"
+              f"-----------------------------------\n"
+              f"[Time]       Total        : {cp_1_end - cp_1_start + t + cp_2_end - cp_2_start:.4f}s\n"
+              f"-----------------------------------\n")
+
+    return np.nan_to_num(estimated_power)
