@@ -38,11 +38,11 @@ __global__ void calc_corr_8_bit(T_result *result, T_trace *trace, T_pc *est_pc)
 
 __global__ void calc_corr_16_bit(T_result *result, T_trace *trace, T_pc *est_pc)
 {
-    // threadIdx.x : Key_H(8-bit) : 0 ~ 256
-    // blockIdx.x  : Key_L(8-bit) : 0 ~ 256
+    // threadIdx.x : Key_L(8-bit) : 0 ~ 256
+    // blockIdx.x  : Key_H(8-bit) : 0 ~ 256
     // blockIdx.y  : PoI          : 0 ~ #PoI
     // gridDim.y   :              : #PoI
 
-    result[gridDim.y * ((threadIdx.x << 8) + blockIdx.x) + blockIdx.y] =
-        calc_corr(trace, est_pc, gridDim.y * traceNum, blockIdx.y, (threadIdx.x << 8) + blockIdx.x, gridDim.y, 0x10000);
+    result[gridDim.y * ((blockIdx.x << 8) + threadIdx.x) + blockIdx.y] =
+        calc_corr(trace, est_pc, gridDim.y * traceNum, blockIdx.y, (blockIdx.x << 8) + threadIdx.x, gridDim.y, 0x10000);
 }
