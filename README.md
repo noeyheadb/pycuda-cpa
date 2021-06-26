@@ -12,7 +12,7 @@ It is only works on CUDA-enabled systems.
 - numpy
 
 ## Usage
-Demo script is available [here](https://github.com/noeyheadb/pycuda-CPA/blob/master/demo.py).
+Demo script is available [here](https://github.com/noeyheadb/pycuda-CPA/blob/master/demo_first_order.py).
 
 ## Benchmark
 
